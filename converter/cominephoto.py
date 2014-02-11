@@ -91,8 +91,8 @@ class CombinePhost():
     
 if __name__ == '__main__':
     obj = CombinePhost()
-    videofile = u"D:/百度云/我的视频/完整专业视频/PKF/(Asphyxia) PKF Studios - Pajama Party Massacre_NEW.rmvb"
-    targetfile = u"e:/new/(Asphyxia) PKF Studios - Pajama Party Massacre_NEW.jpg"
+    videofile = u"D:/百度云/我的视频/armcarry-movieclips/like/心战-陈燃.rmvb"
+    targetfile = u"e:/new/心战-陈燃.jpg"
     photofile = obj.makeVideoAbstract(videofile, targetfile)
     print photofile
     
