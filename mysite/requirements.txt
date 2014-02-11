@@ -1,0 +1,4 @@
+Django
+gunicorn
+supervisor
+mysql-python
