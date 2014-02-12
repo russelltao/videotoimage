@@ -7,7 +7,7 @@ urlpatterns = patterns('',
     # Examples:
     # url(r'^$', 'mysite.views.home', name='home'),
     # url(r'^blog/', include('blog.urls')),
-
+    (r'^test/(.*)$', test),
     (r'^novel/(.*)$', novelhtml),
     (r'^(\w+)/category/(.*)$', categoryhtml),
     (r'^templates/(?P<path>.*)$', 'django.views.static.serve', 

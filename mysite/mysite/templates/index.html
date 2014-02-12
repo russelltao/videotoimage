@@ -42,7 +42,7 @@ table.stocklist {
 <table>
 <tr>
 
-{% for uri,desc, c, fs in typelist %}
+{% for uri,desc, c, fs, active in typelist %}
 <td>
 <p style="color:{{c}};font-size:{{fs}}%"><a href="{{uri}}">{{desc}}</a></p>
 </td>

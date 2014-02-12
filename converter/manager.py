@@ -35,6 +35,9 @@ class Manage():
                 self.ftypes[ext]=1
 
     def handlerFolder(self, folder, targetRootFolder):
+        if os.path.exists(targetRootFolder) == False:
+            os.mkdir(targetRootFolder)
+                    
         obj = cominephoto.CombinePhost(targetRootFolder)
         files = os.listdir(folder)
         
@@ -45,8 +48,7 @@ class Manage():
             
             if os.path.isdir(sourceFile):
                 newtartgetfolder = targetRootFolder+videofile+'/'
-                if os.path.exists(newtartgetfolder) == False:
-                    os.mkdir(newtartgetfolder)
+
                 self.handlerFolder(sourceFile+'/', newtartgetfolder)
                 continue
     
@@ -75,8 +77,8 @@ class Manage():
 
 
 if __name__ == '__main__':
-    sourceVideoFolder = "D:/百度云/我的视频/综艺/"
-    targetRootFolder = "e:/zhongyi/"
+    sourceVideoFolder = "D:/百度云/我的视频/"
+    targetRootFolder = "e:/images/"
     
     logging.basicConfig(filename = targetRootFolder+"/log.txt", level = logging.INFO)
     
