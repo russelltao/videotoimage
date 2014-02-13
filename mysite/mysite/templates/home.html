@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% block content %} 
+
+<div class="row">
+<ul class="nav nav-pills">
+{% for uri,desc, c, fs, active in typelist %}
+{% if active %}
+<li class="active">
+{% else %}
+<li>
+{% endif %}
+<a href="{{uri}}">{{desc}}</a></li>
+{% endfor %}
+<li><a href="/novel/main">小说</a></li>
+</ul>
+
+</div>
+
+<div class="row">
+<div class="col-md-3">
+<h1>分类<small>[{{cateCount}}]</small></h1>
+<ul>
+{% for folder,l in topfolders %}
+<li><a href="{{l}}">{{folder}}</a></li>
+<ul>
+  <li>1</li>
+  <ul>
+  <li>3</li>
+	</ul>
+</ul>
+{% endfor %}
+</ul>
+
+</div>
+<div class="col-md-9">.col-md-1</div>
+</div>
+
+
+<div class="row">
+<table class="table" width="220" border="0" cellspacing="0" cellpadding="0">
+
+
+<tr>
+<td>
+
+<table class="table">
+<caption>
+</caption>
+<tr>
+<td style="width: 259px; vertical-align:top">
+
+
+<table class="table table-striped">
+<caption><h1>分类<small>[{{cateCount}}]</small></h1></caption>
+{% for folder,l in topfolders %}
+<tr>
+<td align="left"><a href="{{l}}">{{folder}}</a></td>
+{% endfor %}
+</tr>
+</table>
+
+
+</td>
+<td align="left">
+
+<table class="table table-bordered">
+<caption>{{category}}</caption>
+{% for f,l,lineflag in topfiles %}
+{% if lineflag %}
+<tr>
+{% endif %}
+<td>
+<a href="{{l}}"><img class="img-thumbnail" src="{{f}}"/></a>
+</td>
+
+{% if not lineflag %}
+</tr>
+{% endif %}
+
+{% endfor %}
+
+</table>
+
+
+</td>
+</tr>
+</table>
+
+</td>
+</tr>
+</table>
+
+</div>
+
+
+{% endblock %}  

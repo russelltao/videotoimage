@@ -137,11 +137,13 @@ def renderFrame(cinfo, type):
     typelist = []
     for k,v in uriFolder.items():
         color = "blue"
+        active = False
         fs = 80
         if k == type:
             color = "red"
             fs = 120
-        typelist.append(("/"+k, v[2], color, fs))
+            active = True
+        typelist.append(("/"+k, v[2], color, fs, active))
     d = {
          "topfolders":topfolders, 
          "category":"最新20部视频", 
@@ -157,6 +159,22 @@ def indexhtml(request, type):
     else:
         type = "video"
     t = get_template('index.html')
+    topfiles = manager.getTopFiles(20)
+    
+    d = renderFrame(manager, type)
+    d["topfiles"]=topfiles
+
+    c = Context( d )
+    html = t.render(c)
+    return HttpResponse(html)
+
+def test(request, type):
+    manager = uriFolder["video"][1]
+    if uriFolder.has_key(type):
+        manager = uriFolder[type][1]
+    else:
+        type = "video"
+    t = get_template('home.html')
     topfiles = manager.getTopFiles(20)
     
     d = renderFrame(manager, type)
