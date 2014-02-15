@@ -2,3 +2,5 @@ Django
 gunicorn
 supervisor
 mysql-python
+supervisor
+django-bootstrap3

@@ -156,7 +156,7 @@ def videoshow(request, category, subtype):
             topfilenum = len(files)
         n+=1
         curname = root[len(DiskRootFolder):]
-        print "cc",curname
+
         if curname == completetype:
             print "find",completetype, dirs,files
             
