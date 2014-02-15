@@ -3,20 +3,26 @@
 <head>  
     <meta charset="UTF-8">  
     <title>video</title>  
-    {% load bootstrap3 %}{# Load CSS and JavaScript #}{% bootstrap_css %}{% bootstrap_javascript %}
+    {% load bootstrap3 %}
+    {% bootstrap_css %}
+    {# IE doesn't support js % bootstrap_javascript % #}
 
 {% bootstrap_messages %}
     <style type="text/css" media="screen">  
         .container{width:800px;}  
         .navbar .container {width:800px;}  
+
     </style>  
+
+    <link rel="shortcut icon" href="/favicon.ico" />
 </head>  
 <body>  
    <div class="navbar navbar-inverse">  
        <div class="navbar-inner">  
            <div class="container-liquid">  
-                <a class="brand" href="/">首页</a>  
-				<a class="brand" href="/">如何购买视频</a> 
+                <a class="navbar-brand" href="/" target="_blank">视频首页</a>  
+				<a class="navbar-brand" href="/mynovel/main" target="_blank">小说</a> 
+				<a class="navbar-brand" href="/howtobuy" target="_blank">如何购买视频</a> 
            </div>  
        </div>  
    </div>  

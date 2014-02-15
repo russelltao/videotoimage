@@ -3,7 +3,7 @@
 
 <div class="row">
 <ul class="nav nav-pills">
-{% for uri,desc, c, fs, active in typelist %}
+{% for desc, uri, active in topsubjectnames %}
 {% if active %}
 <li class="active">
 {% else %}
@@ -11,86 +11,44 @@
 {% endif %}
 <a href="{{uri}}">{{desc}}</a></li>
 {% endfor %}
-<li><a href="/novel/main">小说</a></li>
 </ul>
-
 </div>
 
 <div class="row">
-<div class="col-md-3">
-<h1>分类<small>[{{cateCount}}]</small></h1>
-<ul>
-{% for folder,l in topfolders %}
-<li><a href="{{l}}">{{folder}}</a></li>
-<ul>
-  <li>1</li>
-  <ul>
-  <li>3</li>
-	</ul>
-</ul>
-{% endfor %}
-</ul>
-
-</div>
-<div class="col-md-9">.col-md-1</div>
+<div class="col-md-3 col-md-offset-3"><strong>{{price}}</strong></div>
 </div>
 
 
 <div class="row">
-<table class="table" width="220" border="0" cellspacing="0" cellpadding="0">
 
-
-<tr>
-<td>
-
-<table class="table">
-<caption>
-</caption>
-<tr>
-<td style="width: 259px; vertical-align:top">
-
-
-<table class="table table-striped">
-<caption><h1>分类<small>[{{cateCount}}]</small></h1></caption>
-{% for folder,l in topfolders %}
-<tr>
-<td align="left"><a href="{{l}}">{{folder}}</a></td>
-{% endfor %}
-</tr>
-</table>
-
-
-</td>
-<td align="left">
-
-<table class="table table-bordered">
-<caption>{{category}}</caption>
-{% for f,l,lineflag in topfiles %}
-{% if lineflag %}
-<tr>
-{% endif %}
-<td>
-<a href="{{l}}"><img class="img-thumbnail" src="{{f}}"/></a>
-</td>
-
-{% if not lineflag %}
-</tr>
-{% endif %}
-
-{% endfor %}
-
-</table>
-
-
-</td>
-</tr>
-</table>
-
-</td>
-</tr>
-</table>
-
+<div class="table-responsive">
+  <table class="table"><tr>
+  <td>
+    <ul>{{ treelist|safe }}  </ul>
+  </td>
+  <td>
+    <p>
+  {% for page_number in showimages.paginator.page_range %}
+    {% ifequal page_number  showimages.number %}
+      第{{ page_number }}页
+    {% else %}
+      <strong><a href="?page={{ page_number }}">第{{ page_number }}页</a></<strong>
+    {% endifequal %}
+  {% endfor %}
+</p>
+    
+    {% for i,sitepath,bigimgsrc in showimages %} 
+<div>
+<a href="{{bigimgsrc}}">
+<img src="{{i}}" class="img-responsive" alt="Responsive image" /> </a>
+<captain>{{sitepath}}</captain>
 </div>
+{% endfor %}
+    </td></tr>
+  </table>
+</div>
+</div>
+
 
 
 {% endblock %}  

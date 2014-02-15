@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block content %} 
+
+
+<div class="row">
+
+
+<div class="table-responsive">
+  <table class="table"><tr>
+  <td>
+
+<ul>
+{% for n in names %}
+<li><a href="/mynovel/{{n}}">{{n}}</a></li>
+{% endfor %}
+</ul>
+</td>
+<td>
+<div class="row">
+<strong>{{novelname}}</strong>
+</div>
+<div class="row">
+<pre style="word-wrap: break-word; white-space: pre-wrap; white-space: -moz-pre-wrap">{{content}}</pre>
+</div>
+</td>
+
+</div>
+
+
+
+{% endblock %}  

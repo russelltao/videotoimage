@@ -168,21 +168,6 @@ def indexhtml(request, type):
     html = t.render(c)
     return HttpResponse(html)
 
-def test(request, type):
-    manager = uriFolder["video"][1]
-    if uriFolder.has_key(type):
-        manager = uriFolder[type][1]
-    else:
-        type = "video"
-    t = get_template('home.html')
-    topfiles = manager.getTopFiles(20)
-    
-    d = renderFrame(manager, type)
-    d["topfiles"]=topfiles
-
-    c = Context( d )
-    html = t.render(c)
-    return HttpResponse(html)
 
 def categoryhtml(request,type, category):
     category = category.encode('utf-8')
