@@ -80,11 +80,33 @@ class Cacheinfo():
                     #print "Apress is in the database."
                 self.tmpFileCount=0
                 treelist = self.walkAddFolder(realpath)
-                print tf,self.tmpFileCount
+                #print tf,self.tmpFileCount
                 #if len(treelist) > 0:
                     #print "tt",treelist
                 walkitems = os.walk(realpath)
+                #for root, dirs, files in walkitems: 
+                    #for f in files: 
+                        #if f[-3:] != "jpg":
+                            #print os.path.join(root, f)
+                            #continue
+                        #pathfile = os.path.join(root, f)
+    
+                        #self.files.append((pathfile, os.stat(pathfile).st_mtime))
+                        
+                #self.files.sort(key = lambda l: (l[1], l[0]), reverse = True)
                 self.topsubjects[tf] = (p.price, walkitems, treelist, self.tmpFileCount )
+                
+        walkitems = os.walk(DiskRootFolder)
+        for root, dirs, files in walkitems: 
+            for f in files: 
+                if f[-3:] != "jpg":
+                        #print os.path.join(root, f)
+                    continue
+                pathfile = os.path.join(root, f)
+
+                self.files.append((pathfile, os.stat(pathfile).st_mtime))
+                        
+        self.files.sort(key = lambda l: (l[1], l[0]), reverse = True)
                 
         self.isInit = True
         self.lastInitTime = time.time()
@@ -117,19 +139,23 @@ def unordered_list(value):
     return _recurse_children(value) 
 
 cache = Cacheinfo()
+
 def videoshow(request, category, subtype):
+    isShowLatestVideo = False
+    if category == "latestvideo":
+        isShowLatestVideo = True
+        print "ok"
+    print "category",category,"subtype",subtype
     category = category.encode('utf-8')
     
     completetype = category
     if subtype != '':
         completetype = category+subtype.encode('utf-8')
 
-    print category
-    print completetype
     cache.checkTopSubject()
     
     if not cache.topsubjects.has_key(category):
-        print type(category),type(cache.topsubjects.items()[0][0])
+        #print type(category),type(cache.topsubjects.items()[0][0])
         category = cache.topsubjects.items()[-1][0]
 
     t = get_template('home.html')
@@ -139,7 +165,7 @@ def videoshow(request, category, subtype):
     names = []
     
     for k,v in cache.topsubjects.items():
-        if k == category:
+        if k == category and not isShowLatestVideo:
             names.append(("%s[%d]"%(k,v[3]), '/'+k, True))
         else:
             names.append(("%s[%d]"%(k,v[3]), '/'+k, False))
@@ -172,6 +198,21 @@ def videoshow(request, category, subtype):
 
     if not find:
         print "not find", completetype
+        
+    latestNum = 20
+    if isShowLatestVideo:
+        print "taohui"
+        i = 0
+        for f in cache.files:
+            i += 1
+            sitepath = f[0][len(DiskRootFolder):]
+            print "sitepath",sitepath,type(resizeImageFolder),type(sitepath)
+            imgsrc = resizeImageFolder+sitepath
+            bigimgsrc = bigImageFolder+sitepath
+            tmplist.append((imgsrc,sitepath[0:-4], bigimgsrc))
+            if i > latestNum:
+                break
+            
     limit = 5  # 每页显示的记录数
 
     paginator = Paginator(tmplist, limit)  # 实例化一个分页对象
@@ -185,7 +226,10 @@ def videoshow(request, category, subtype):
         tmplist = paginator.page(paginator.num_pages)  # 取最后一页的记录
 
     d["showimages"] = tmplist
-    d["price"] = "[%s]类每个视频价格为%d元"%(category,cache.topsubjects[category][0])
+    showinfo = "以下视频是站长最新上传的20部视频"
+    if not isShowLatestVideo:
+        showinfo = "[%s]类每个视频价格为%d元"%(category,cache.topsubjects[category][0])
+    d["price"] = showinfo
     
     treelist = "<a href=\"/%s\">%s<small>[%d]</small></a>"%(category, category, topfilenum),cache.topsubjects[category][2]
 
