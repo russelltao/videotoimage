@@ -1,5 +1,4 @@
-# Create your views here.
-# -*- coding: utf-8 -*- 
+#coding:utf-8
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.template.loader import get_template
@@ -63,7 +62,9 @@ class Cacheinfo():
         return l
         
     def checkTopSubject(self):
-        #self.topsubjects = {}
+        self.topsubjects = {}
+        self.files = []
+        print "checkTopSubject running..."
         topfolder = os.listdir(DiskRootFolder)
         for tf in topfolder:
             realpath = os.path.join(DiskRootFolder, tf)
@@ -77,26 +78,17 @@ class Cacheinfo():
                     p.save()
                 else:
                     pass
-                    #print "Apress is in the database."
+                    
                 self.tmpFileCount=0
                 treelist = self.walkAddFolder(realpath)
                 #print tf,self.tmpFileCount
                 #if len(treelist) > 0:
                     #print "tt",treelist
                 walkitems = os.walk(realpath)
-                #for root, dirs, files in walkitems: 
-                    #for f in files: 
-                        #if f[-3:] != "jpg":
-                            #print os.path.join(root, f)
-                            #continue
-                        #pathfile = os.path.join(root, f)
-    
-                        #self.files.append((pathfile, os.stat(pathfile).st_mtime))
-                        
-                #self.files.sort(key = lambda l: (l[1], l[0]), reverse = True)
                 self.topsubjects[tf] = (p.price, walkitems, treelist, self.tmpFileCount )
                 
         walkitems = os.walk(DiskRootFolder)
+        
         for root, dirs, files in walkitems: 
             for f in files: 
                 if f[-3:] != "jpg":
@@ -116,9 +108,8 @@ class Cacheinfo():
         detra = time.time() - self.lastInitTime
         #print "cache time detra:",detra
         if self.isInit == False or detra > 600:
+            print "update cache!"
             self.checkTopSubject()
-        
-    
 
 
 def unordered_list(value): 
@@ -139,24 +130,28 @@ def unordered_list(value):
     return _recurse_children(value) 
 
 cache = Cacheinfo()
+#cache.checkTopSubject()
 
 def videoshow(request, category, subtype):
+    cache.checkTopSubject()
+    
     isShowLatestVideo = False
     if category == "latestvideo":
         isShowLatestVideo = True
         print "ok"
-    print "category",category,"subtype",subtype
+    #print "category",category,"subtype",subtype
     category = category.encode('utf-8')
     
     completetype = category
     if subtype != '':
         completetype = category+subtype.encode('utf-8')
 
-    cache.checkTopSubject()
+    
     
     if not cache.topsubjects.has_key(category):
         #print type(category),type(cache.topsubjects.items()[0][0])
         category = cache.topsubjects.items()[-1][0]
+        isShowLatestVideo = True
 
     t = get_template('home.html')
 
@@ -226,7 +221,7 @@ def videoshow(request, category, subtype):
         tmplist = paginator.page(paginator.num_pages)  # 取最后一页的记录
 
     d["showimages"] = tmplist
-    showinfo = "以下视频是站长最新上传的20部视频"
+    showinfo = "以下视频是站长最新上传的20部视频。每个截图上方有视频分辨华和截图，请大家看清楚需要再购买。"
     if not isShowLatestVideo:
         showinfo = "[%s]类每个视频价格为%d元"%(category,cache.topsubjects[category][0])
     d["price"] = showinfo

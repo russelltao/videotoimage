@@ -10,9 +10,22 @@ https://docs.djangoproject.com/en/1.6/ref/settings/
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
+from os import path
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
+ROOT_PATH = path.abspath(path.join(path.dirname('settings.py'), path.pardir))
+STATIC_URL = '/staticfile/'
 
+# Additional locations of static files
+STATICFILES_DIRS = (
+    path.join(ROOT_PATH, 'mysite/static'),
+)
+
+STATICFILES_FINDERS = (
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    #'django.contrib.staticfiles.finders.DefaultStorageFinder',
+)
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.6/howto/deployment/checklist/
 

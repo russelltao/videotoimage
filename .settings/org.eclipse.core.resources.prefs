@@ -3,6 +3,7 @@ encoding//converter/cominephoto.py=cp936
 encoding//converter/makesnapshot.py=cp936
 encoding//converter/manager.py=cp936
 encoding//converter/mediainfo.py=cp936
+encoding//mysite/imagemanage/models.py=utf-8
 encoding//mysite/imagemanage/views.py=utf-8
 encoding//mysite/mysite/templates/home.html=UTF-8
 encoding//mysite/mysite/views.py=utf-8
