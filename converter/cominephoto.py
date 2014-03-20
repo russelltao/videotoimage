@@ -17,10 +17,9 @@ class CombinePhost():
         self.baseSmallWidth = 352
         self.baseSmallHeight = 240
     
-    def makeFinalPhoto(self, targetfile, videoinfo, picfiles,capturetimes):
+    def makeFinalPhoto(self, targetfile, videoinfo, picfiles,capturetimes, wnum = 4, hnum = 4):
         titleh = 70
-        wnum = 4
-        hnum = 4
+
         w = wnum*self.smallWidth
         h = hnum*self.smallHeight + titleh
         toImage = Image.new('RGB', (w, h), (255,255,255))
@@ -37,7 +36,7 @@ class CombinePhost():
         titlefont = ImageFont.truetype('simsun.ttc',28)
         dr.text((5,5), title,fill=(0,0,0), font=titlefont)
         
-        dr.text((10,40), u"查看全部视频请登陆至：http://lordofcarry.weebly.com/，购买请发邮件至lordofcarry@foxmail.com",fill=(184,32,5), font=ImageFont.truetype('simsun.ttc',26,index=1))
+        dr.text((10,40), u"主站：http://lordofcarry.weebly.com/，图处站：http://115.28.146.228:9000/，邮箱：lordofcarry@foxmail.com",fill=(184,32,5), font=ImageFont.truetype('simsun.ttc',26,index=1))
         
         i = 0
         for y in  range(hnum):
@@ -58,15 +57,46 @@ class CombinePhost():
 
         
     def makeVideoAbstract(self, videofile, targetfile):
+        if os.path.exists(targetfile):
+            print targetfile,"exist"
+            return True
+        
         videoinfo = mediainfo.parse_info(videofile)
         if None == videoinfo["general_duration"]:
             raise "can't get video duration"
     
         duration = float(videoinfo["general_duration"])
+
+        wnum = 4
+        hnum = 4
         if duration == 0:
             print "get duration as 0 from file "+videofile
             #logging.error("get duration as 0 from file "+videofile)
             return False
+        if duration > float(5000):
+            wnum = 5
+            hnum = 9
+        elif duration > float(4000):
+            wnum = 5
+            hnum = 8
+        elif duration > float(3000):
+            wnum = 5
+            hnum = 7
+        elif duration > float(2000):
+            wnum = 5
+            hnum = 6
+        elif duration > float(1000):
+            wnum = 5
+            hnum = 5
+        elif duration > float(600):
+            wnum = 4
+            hnum = 5
+        else:
+            print duration , float(3600)
+            
+        print "generate %d*%d photo"%(wnum,hnum)
+        snapnum = wnum*hnum
+        
         videoinfo['filename'] = videofile.split('/')[-1]
         videoinfo['videotype'] = videofile.split('/')[-2]
         self.smallWidth = int(videoinfo['video_width'])
@@ -81,18 +111,20 @@ class CombinePhost():
         
         fnames = []
         capturetimes = []
-        s = snapshot()
+        
+        s = snapshot(snapnum)
         if False == s.captureVideo(videofile, self.smallWidth, self.smallHeight, duration, fnames, capturetimes):
             print "captureVideo Fail",videofile
             return False
         #print fnames
         #print videoinfo
-        return self.makeFinalPhoto(targetfile, videoinfo, fnames, capturetimes)
+        return self.makeFinalPhoto(targetfile, videoinfo, fnames, capturetimes, wnum, hnum)
     
 if __name__ == '__main__':
     obj = CombinePhost()
-    videofile = u"D:/百度云/我的视频/完整专业视频/老梦/LM-110 罪恶的医生.rmvb"
-    targetfile = u"e:/new/LM-110 罪恶的医生.jpg"
-    photofile = obj.makeVideoAbstract(videofile, targetfile)
-    print photofile
+    videofiles = [u"D:/百度云/我的视频/10元/2F-267 Yellow Gym Suit.divx",u"D:/百度云/我的视频/完整专业视频/其他6-室内/electric_shock-desktop.m4v",]
+    for videofile in videofiles:
+        targetfile = u"e:/new"+videofile[videofile.rfind('/'):]+".jpg"
+        photofile = obj.makeVideoAbstract(videofile, targetfile)
+        print photofile,targetfile+" complete"
     

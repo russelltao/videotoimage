@@ -1,26 +1,22 @@
-{% extends "base.html" %}
-{% block content %} 
+{% extends "mybase.html" %}
 
+{% block title %}{{ videoname }} | {% endblock %}
+{% block keywords %}{{ keywords }}{% endblock %}
+
+{% block sitecontent %} 
 
 <div class="row">
-
-
-<strong>请将视频截图下方的文字复制下来，将其发到邮箱lordofcarry@foxmail.com中。付款方式可以是支付宝、银行卡充值或者为站长手机充值。</strong>
+<small>video name(请复制下面这行文字用以购买):</<small>>
 </div>
 <div class="row">
-<strong>站长QQ是：517442858。</strong>
-<small>请注意，视频截图的上方有分辨率和时长，请在意的同学慎重选择，谢谢支持</small>
+<strong>{{picinfo}}</strong>
 </div>
-<br/><br/>
-<div>例如，向站长邮箱发送以下文字：<br/>
-<small>完整专业视频/Ruemorgue/RueMorgue - Guns Don't Kill People<br/>
-完整专业视频/Feet&Sleep Fantasis/feetandsleepDEMO/Candy - Neck Exposure (Part 1).flv<br/>
-专业视频片断/m-f-fetish-fair-basement-firemans-lift-by-masked-man.wmv<br/>
-girl_carry_girl/昏迷抱/叠影惊潮.rm</small>
-</div>
-<br/><br/><br/>
 <div class="row">
-<!-- Duoshuo Comment BEGIN -->
+<img src="{{bigimgsrc}}" class="img-responsive" alt="{{videoname}}" />
+</div>
+
+<div class="row">
+	<!-- Duoshuo Comment BEGIN -->
 	<div class="ds-thread"></div>
 <script type="text/javascript">
 var duoshuoQuery = {short_name:"videoshare"};

@@ -1,0 +1,63 @@
+{% extends "mybase.html" %}
+
+{% block title %}{{ videocategory }} {% endblock %}
+{% block keywords %}{{ keywords }}{% endblock %}
+
+{% block sitecontent %} 
+
+<div class="row">
+<ul class="nav nav-pills">
+{% for desc, uri, active in topsubjectnames %}
+{% if active %}
+<li class="active">
+{% else %}
+<li>
+{% endif %}
+<a href="{{uri}}">{{desc}}</a></li>
+{% endfor %}
+</ul>
+</div>
+
+<div class="row">
+<div class="col-md-8 col-md-offset-2"><strong>{{price}}</strong></div>
+</div>
+
+
+<div class="row">
+<div class="table-responsive">
+<table class="table"><tr>
+<td width="25%"><ul>{{ treelist|safe }}  </ul></td>
+
+<td width="55%">
+		<div class="row"><strong>{{subname}}</strong><small>{{subtypedesc}}</<small></div>
+		<div class="row">
+		    <div class="pagination">
+				<p>
+				  {% for page_number in paginator.page_range %}
+				    {% ifequal page_number  page_obj.number %}
+				      第{{ page_number }}页
+				    {% else %}
+				      <strong><a href="?page={{ page_number }}">第{{ page_number }}页</a></<strong>
+				    {% endifequal %}
+				  {% endfor %}
+				</p>
+		    </div>
+		
+			{% for i,sitepath,bigimgsrc,picname in object_list %} 
+			<div>
+			<a href="{{bigimgsrc}}">
+			<img src="{{i}}" class="img-responsive" alt="{{picname}}" /> </a>
+			<captain>{{sitepath}}</captain>
+			</div>
+			{% endfor %}
+		</div>
+</td>
+
+<td width="20%">
+	{% include "sidebar.html" %}
+</td>
+</tr>
+</table></div>
+</div>
+
+{% endblock %}  

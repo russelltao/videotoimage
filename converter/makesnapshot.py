@@ -9,7 +9,7 @@ runffmpeg=u"ffmpeg -ss %s -i \"%s\" -y -f image2 -loglevel panic -t 0.001 -s %ix
 
 
 class snapshot():
-    def __init__(self, targetfolder="e:/tmp/", photonumber = 16):
+    def __init__(self, photonumber = 16, targetfolder="e:/tmp/"):
         self.targetfolder = targetfolder
         self.photonumber = photonumber
 

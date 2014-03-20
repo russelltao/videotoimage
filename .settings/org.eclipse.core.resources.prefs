@@ -1,9 +1,14 @@
 eclipse.preferences.version=1
+encoding//converter/PCSshare.py=utf-8
 encoding//converter/cominephoto.py=cp936
 encoding//converter/makesnapshot.py=cp936
 encoding//converter/manager.py=cp936
 encoding//converter/mediainfo.py=cp936
+encoding//mysite/imagemanage/middleware.py=utf-8
 encoding//mysite/imagemanage/models.py=utf-8
+encoding//mysite/imagemanage/utils/cache.py=utf-8
+encoding//mysite/imagemanage/utils/generateDBdata.py=utf-8
+encoding//mysite/imagemanage/utils/getiploc.py=utf8
+encoding//mysite/imagemanage/utils/profiler.py=utf-8
 encoding//mysite/imagemanage/views.py=utf-8
-encoding//mysite/mysite/templates/home.html=UTF-8
-encoding//mysite/mysite/views.py=utf-8
+encoding//mysite/mysite/sitemap.py=utf-8

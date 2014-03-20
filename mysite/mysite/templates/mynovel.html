@@ -1,51 +1,53 @@
-{% extends "base.html" %}
-{% block content %} 
+{% extends "mybase.html" %}
+
+{% block title %}{{novelname}} | {% endblock %}
+
+{% block sitecontent %} 
 
 
 <div class="row">
-
-
 <div class="table-responsive">
-  <table class="table"><tr>
-  	<td>
+	<table class="table">
+	<tr>
+	  	<td>
+	
+			<ul>
+			{% for n in names %}
+			<li><a href="/mynovel/{{n}}">{{n}}</a></li>
+			{% endfor %}
+			</ul>
+	    </td>
 
-		<ul>
-		{% for n in names %}
-		<li><a href="/mynovel/{{n}}">{{n}}</a></li>
-		{% endfor %}
-		</ul>
-    </td>
 
-
-<td>
-
-	<div class="row">
-	<strong>{{novelname}}</strong>
-	</div>
-	<div class="row">
-	<pre style="word-wrap: break-word; white-space: pre-wrap; white-space: -moz-pre-wrap">{{content}}</pre>
-	</div>
-	<div class="row">
-	<!-- Duoshuo Comment BEGIN -->
-	<div class="ds-thread"></div>
-<script type="text/javascript">
-var duoshuoQuery = {short_name:"videoshare"};
-	(function() {
-		var ds = document.createElement('script');
-		ds.type = 'text/javascript';ds.async = true;
-		ds.src = 'http://static.duoshuo.com/embed.js';
-		ds.charset = 'UTF-8';
-		(document.getElementsByTagName('head')[0] 
-		|| document.getElementsByTagName('body')[0]).appendChild(ds);
-	})();
-	</script>
-<!-- Duoshuo Comment END -->
-	</div>
-
-</td>
-
+		<td>
+		
+			<div class="row">
+			<strong>{{novelname}}</strong>
+			</div>
+			<div class="row">
+			<pre style="word-wrap: break-word; white-space: pre-wrap; white-space: -moz-pre-wrap">{{content}}</pre>
+			</div>
+			<div class="row">
+			<!-- Duoshuo Comment BEGIN -->
+			<div class="ds-thread"></div>
+				<script type="text/javascript">
+				var duoshuoQuery = {short_name:"videoshare"};
+					(function() {
+						var ds = document.createElement('script');
+						ds.type = 'text/javascript';ds.async = true;
+						ds.src = 'http://static.duoshuo.com/embed.js';
+						ds.charset = 'UTF-8';
+						(document.getElementsByTagName('head')[0] 
+						|| document.getElementsByTagName('body')[0]).appendChild(ds);
+					})();
+					</script>
+				<!-- Duoshuo Comment END -->
+			</div>
+		
+		</td>
+	</tr>
+	</table>
+</div>
 </div>
 
-
-
-{% endblock %}  
+{% endblock %}

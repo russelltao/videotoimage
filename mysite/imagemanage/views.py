@@ -4,39 +4,40 @@ from django.http import HttpResponse
 from django.template.loader import get_template
 from django.template import Context
 from django.http import HttpResponse
-import os
-import time
-from models import TopSubject
+import os, time
+from models import TopSubject,VideoFolder
 from types import *
-from django.core.paginator import Paginator
-from django.core.paginator import EmptyPage
-from django.core.paginator import PageNotAnInteger
+from django.core.paginator import Paginator,EmptyPage,PageNotAnInteger
 from django.shortcuts import render_to_response
+from django.utils.translation import ugettext as _
+from utils.cache import cache as memcache
+from utils.generateDBdata import scanAllFolders
+from utils.getiploc import iplocater,string2ip
+import logging
+from django.views.generic.base import TemplateView
+from django.views.generic import ListView
 
 
-#rootpicfolder='/home/tmp/videophoto/'
 thumbnailPrefix = "/resize/"
 initialPicPrefix = "/image/"
-
+detailPicPrefix = "/picdetail/"
 novelFolder = "/home/novel/"
-
 resizeImageFolder = "/static/resize/"
 bigImageFolder = "/static/image/"
-
 DiskRootFolder = '/mnt/images/'
 
+logger = logging.getLogger(__name__)
+
+def scanfolder(request):
+    scanAllFolders(DiskRootFolder)
+    return HttpResponse('<h1>success</h1>')
 
 class Cacheinfo():
     def __init__(self):
-        self.isInit = False
-        
         self.files = []
-        self.lastInitTime = 0
-        
         self.topsubjects = {}
-        
         self.tmpFileCount = 0
-        
+    
     def walkAddFolder(self, realpath):
         l = []
 
@@ -62,9 +63,9 @@ class Cacheinfo():
         return l
         
     def checkTopSubject(self):
+        
         self.topsubjects = {}
-        self.files = []
-        print "checkTopSubject running..."
+        #print "checkTopSubject running..."
         topfolder = os.listdir(DiskRootFolder)
         for tf in topfolder:
             realpath = os.path.join(DiskRootFolder, tf)
@@ -74,19 +75,30 @@ class Cacheinfo():
                     p = TopSubject.objects.get(name=tf)
                 except TopSubject.DoesNotExist:
                     print "add new topsubject",tf
-                    p = TopSubject(name=tf,path=realpath,price=5)
+                    p = TopSubject(name=tf,path=realpath,price=5,descinfo='[%s]类每个视频价格为5元'%(tf))
                     p.save()
                 else:
                     pass
                     
                 self.tmpFileCount=0
                 treelist = self.walkAddFolder(realpath)
-                #print tf,self.tmpFileCount
+
                 #if len(treelist) > 0:
                     #print "tt",treelist
                 walkitems = os.walk(realpath)
-                self.topsubjects[tf] = (p.price, walkitems, treelist, self.tmpFileCount )
+                self.topsubjects[tf] = [p.price, walkitems, treelist, self.tmpFileCount,p.descinfo, p.keywords]
                 
+
+    def walkAll(self): 
+        self.files = memcache.get("files")
+        if self.files == None:
+            print "cache none files"
+        else:
+            print "cache meet files"
+            return
+            
+        self.files = []
+        
         walkitems = os.walk(DiskRootFolder)
         
         for root, dirs, files in walkitems: 
@@ -96,20 +108,11 @@ class Cacheinfo():
                     continue
                 pathfile = os.path.join(root, f)
 
-                self.files.append((pathfile, os.stat(pathfile).st_mtime))
+                self.files.append((pathfile, os.stat(pathfile).st_mtime, detailPicPrefix+pathfile[len(DiskRootFolder):]))
                         
         self.files.sort(key = lambda l: (l[1], l[0]), reverse = True)
-                
-        self.isInit = True
-        self.lastInitTime = time.time()
-
         
-    def checkNeedInit(self):
-        detra = time.time() - self.lastInitTime
-        #print "cache time detra:",detra
-        if self.isInit == False or detra > 600:
-            print "update cache!"
-            self.checkTopSubject()
+        memcache.set("files",self.files, 300)
 
 
 def unordered_list(value): 
@@ -129,124 +132,189 @@ def unordered_list(value):
 
     return _recurse_children(value) 
 
-cache = Cacheinfo()
-#cache.checkTopSubject()
 
-def videoshow(request, category, subtype):
-    cache.checkTopSubject()
+
+class BaseMixin(object):
+
+    def get_context_data(self, *args, **kwargs):
+        context = super(BaseMixin, self).get_context_data(**kwargs)
+        try:
+            context['online_num'] = len(memcache.get('online_ips'))
+        except Exception as e:
+            logger.exception(u'加载基本信息出错[%s]！', e)
+
+        return context
+
+class OnlineUserPageView(BaseMixin, TemplateView):
+    template_name = "onlineuser.html"
+
+    def get_context_data(self, **kwargs):
+        context = super(OnlineUserPageView, self).get_context_data(**kwargs)
+        onlineips = memcache.get('online_ips')
+        onlineusers = []
+        for ip in onlineips:
+            address = iplocater.getIpAddr( string2ip( ip ) )
+            if '阿里云' in address or '淘宝' in address:
+                continue
     
+            onlineusers.append((ip,address))
+        context['onlineusers'] = onlineusers
+        return context
+
+class VideoPageView(BaseMixin, ListView):
+    template_name = "videoshow.html"
+    paginate_by = 5  # 每页显示的记录数
+    cache = Cacheinfo()
+    category = ""
+    subtype = ""
     isShowLatestVideo = False
-    if category == "latestvideo":
-        isShowLatestVideo = True
-        print "ok"
-    #print "category",category,"subtype",subtype
-    category = category.encode('utf-8')
+    categoryValid = True
+    completetype = ""
     
-    completetype = category
-    if subtype != '':
-        completetype = category+subtype.encode('utf-8')
-
+    latestShowNum = 25 # 最新视频显示总数
+    topfilenum = 0 # 分类里最高目录的文件数
     
+    def __init__(self):
+        self.cache.checkTopSubject()
+        self.cache.walkAll()
     
-    if not cache.topsubjects.has_key(category):
-        #print type(category),type(cache.topsubjects.items()[0][0])
-        category = cache.topsubjects.items()[-1][0]
-        isShowLatestVideo = True
-
-    t = get_template('home.html')
-
-    d = {}
-    
-    names = []
-    
-    for k,v in cache.topsubjects.items():
-        if k == category and not isShowLatestVideo:
-            names.append(("%s[%d]"%(k,v[3]), '/'+k, True))
+    def parse_url(self, kwargs):
+        self.category = kwargs.get("category",None)
+        self.subtype = kwargs.get("subtype",None)
+        if self.category == "latestvideo":
+            self.isShowLatestVideo = True
         else:
-            names.append(("%s[%d]"%(k,v[3]), '/'+k, False))
-        
-        
-    d["topsubjectnames"]=names
-    find = False
-    tmplist = []
-    n=0
-    topfilenum = 0
-    for root, dirs, files in cache.topsubjects[category][1]:
-        if n == 0:
-            print "root",root
-            topfilenum = len(files)
-        n+=1
-        curname = root[len(DiskRootFolder):]
-
-        if curname == completetype:
-            print "find",completetype, dirs,files
+            self.category = self.category.encode('utf-8')
             
-            for f in files:
-                wholepath = os.path.join(root, f)
-                sitepath = wholepath[len(DiskRootFolder):]
+        self.completetype = self.category
+        if self.subtype != '':
+            self.completetype = self.category+self.subtype.encode('utf-8')
+            
+        if not self.cache.topsubjects.has_key(self.category):
+            self.category = self.cache.topsubjects.items()[-1][0]
+            self.isShowLatestVideo = True
+            self.categoryValid = False
+            
+    def get_queryset(self):
+        logger.debug("get_queryset page:%s"%(self.kwargs.get("page",None)))
+        
+        self.parse_url(self.kwargs)
+
+        find = False
+        tmplist = []
+        n=0
+        if self.categoryValid:
+            for root, dirs, files in self.cache.topsubjects[self.category][1]:
+                if n == 0:
+                    #print "root",root
+                    self.topfilenum = len(files)
+                n+=1
+                curname = root[len(DiskRootFolder):]
+        
+                if curname == self.completetype:       
+                    for f in files:
+                        wholepath = os.path.join(root, f)
+                        sitepath = wholepath[len(DiskRootFolder):]
+                        imgsrc = resizeImageFolder+sitepath
+                        bigimgsrc = detailPicPrefix+sitepath
+                        tmppathname = sitepath[0:-4]
+                        alt = tmppathname[0:tmppathname.rfind('.')].replace('/',' ')
+                        tmplist.append((imgsrc,tmppathname, bigimgsrc, alt))
+                    
+                    find = True
+                    break
+        
+            if not find:
+                logger.error('not find %s'%('/'+self.completetype))
+            else:
+                return tmplist
+        
+        if self.isShowLatestVideo:
+            #print "taohui"
+            i = 0
+            for f in self.cache.files:
+                i += 1
+                sitepath = f[0][len(DiskRootFolder):]
                 imgsrc = resizeImageFolder+sitepath
-                bigimgsrc = bigImageFolder+sitepath
-                tmplist.append((imgsrc,sitepath[0:-4], bigimgsrc))
-            
-            find = True
-            break
+                bigimgsrc = detailPicPrefix+sitepath
+                tmppathname = sitepath[0:-4]
+                alt = tmppathname[0:tmppathname.rfind('.')].replace('/',' ')
+                tmplist.append((imgsrc,tmppathname, bigimgsrc, alt))
+                if i > self.latestShowNum:
+                    break
+    
+        return tmplist
 
-    if not find:
-        print "not find", completetype
+    def genFolderTree(self, context):
+        treelist = "<a href=\"/%s\">%s<small>[%d]</small></a>"\
+        %(self.category, self.category, self.topfilenum),self.cache.topsubjects[self.category][2]
+        context["treelist"]=unordered_list(treelist)
         
-    latestNum = 20
-    if isShowLatestVideo:
-        print "taohui"
-        i = 0
-        for f in cache.files:
-            i += 1
-            sitepath = f[0][len(DiskRootFolder):]
-            print "sitepath",sitepath,type(resizeImageFolder),type(sitepath)
-            imgsrc = resizeImageFolder+sitepath
-            bigimgsrc = bigImageFolder+sitepath
-            tmplist.append((imgsrc,sitepath[0:-4], bigimgsrc))
-            if i > latestNum:
-                break
-            
-    limit = 5  # 每页显示的记录数
+    def genTopCategeryList(self, context):
+        names = []
+        
+        for k,v in self.cache.topsubjects.items():
+            if k == self.category and not self.isShowLatestVideo:
+                names.append(("%s[%d]"%(k,v[3]), '/'+k, True))
+            else:
+                names.append(("%s[%d]"%(k,v[3]), '/'+k, False))
 
-    paginator = Paginator(tmplist, limit)  # 实例化一个分页对象
-
-    page = request.GET.get('page')  # 获取页码
-    try:
-        tmplist = paginator.page(page)  # 获取某页对应的记录
-    except PageNotAnInteger:  # 如果页码不是个整数
-        tmplist = paginator.page(1)  # 取第一页的记录
-    except EmptyPage:  # 如果页码太大，没有相应的记录
-        tmplist = paginator.page(paginator.num_pages)  # 取最后一页的记录
-
-    d["showimages"] = tmplist
-    showinfo = "以下视频是站长最新上传的20部视频。每个截图上方有视频分辨华和截图，请大家看清楚需要再购买。"
-    if not isShowLatestVideo:
-        showinfo = "[%s]类每个视频价格为%d元"%(category,cache.topsubjects[category][0])
-    d["price"] = showinfo
+        context["topsubjectnames"]=names
+        
+    def genShowInfo(self, context):
+        showinfo = "以下视频是站长最新上传的%d部视频。每个截图上方有视频分辨华和截图，请大家看清楚需要再购买。"%(self.latestShowNum)
+        if not self.isShowLatestVideo:
+            showinfo = "[%s]类每个视频价格为%d元:  %s"%(self.category,self.cache.topsubjects[self.category][0],self.cache.topsubjects[self.category][4].encode('utf8'))
     
-    treelist = "<a href=\"/%s\">%s<small>[%d]</small></a>"%(category, category, topfilenum),cache.topsubjects[category][2]
+        context["price"] = showinfo
+        
+    def get_context_data(self, **kwargs):
+        logger.debug("get_context_data page:%s"%(self.kwargs.get("page",None)))
+        context = super(VideoPageView, self).get_context_data(**kwargs)
 
-    d["treelist"]=unordered_list(treelist)
-    #print "treelist",treelist
+        if self.isShowLatestVideo:
+            context["videocategory"] = "最新视频|"
+    
+        if self.categoryValid:
+            context["videocategory"] = self.category+"|"
+    
+        self.genTopCategeryList(context)
+        self.genShowInfo(context)
+        self.genFolderTree(context)
+        
+        
+        if not self.isShowLatestVideo and self.completetype != "" and self.completetype != "/":
+            logger.info("completetype=%s"%(self.completetype))
+            try:
+                p = VideoFolder.objects.get(pathname='/'+self.completetype)
+                logger.debug("parent=%s,keywords=%s"%(p.parent,p.keywords))
+                context['keywords'] = p.keywords
+                context['subtypedesc'] = p.descinfo
+                context['subname'] = '[%s]'%(p.name)
+            except VideoFolder.DoesNotExist:
+                context['keywords'] = self.cache.topsubjects[self.category][5].encode('utf8')
+                logger.error('not find %s in VideoFolder'%('/'+self.completetype))
+        
+        return context
+
+class PicDetailPageView(BaseMixin, TemplateView):
+    template_name = "picdetail.html"
+
+    def get_context_data(self, **kwargs):
+        context = super(PicDetailPageView, self).get_context_data(**kwargs)
+        name = kwargs.get("picname",None)
+        logger.debug("picname:%s"%(name))
+        videoname = name[0:name.rfind(".")]
+        videoname = videoname[0:videoname.rfind(".")]
+    
+        context["picinfo"]=name
+        context["bigimgsrc"]=bigImageFolder+name
+        context['videoname'] = videoname[videoname.rfind("/")+1:]
+        context['keywords'] = videoname.replace('/',',')
+        return context
     
 
-    c = Context( d )
-    html = t.render(c)
-    return HttpResponse(html)
-
-    
 class novelmanage():
-    def compare(self, x, y):
-        stat_x = os.stat(self.folder + "/" + x)
-        stat_y = os.stat(self.folder + "/" + y)
-        if stat_x.st_ctime < stat_y.st_ctime:
-            return -1
-        elif stat_x.st_ctime > stat_y.st_ctime:
-            return 1
-        else:
-            return 0
     def __init__(self):
         self.folder = novelFolder
         self.filelist = []
@@ -261,29 +329,63 @@ class novelmanage():
         fcontent = f.read()
         f.close()
         return fcontent
+
+    def compare(self, x, y):
+        stat_x = os.stat(self.folder + "/" + x)
+        stat_y = os.stat(self.folder + "/" + y)
+        if stat_x.st_ctime < stat_y.st_ctime:
+            return -1
+        elif stat_x.st_ctime > stat_y.st_ctime:
+            return 1
+        else:
+            return 0
+        
+class NovelPageView(BaseMixin, TemplateView):
+    template_name = "mynovel.html"
+
+    def get_context_data(self, **kwargs):
+        context = super(NovelPageView, self).get_context_data(**kwargs)
+        name = kwargs.get("novelname",None)
+        
+        novel = novelmanage()
+        nlist = novel.readFolder()
+    
+        if name == "main":
+            name = nlist[0]
+        else:
+            name = name.encode('utf-8')
+            
+        filename = os.path.join(novelFolder, name)
+        
+        f = open(filename, 'r')
+        fcontent = f.read()
+        f.close()
+
+        context["names"]=nlist
+        context["novelname"]=name
+        context['content'] = fcontent.decode('gbk', 'ignore').encode('utf-8')
+
+        return context
     
 def mynovelhtml(request, name):
     novel = novelmanage()
     nlist = novel.readFolder()
-    print nlist
+
     if name == "main":
         name = nlist[0]
     else:
         name = name.encode('utf-8')
-    
+        
     filename = os.path.join(novelFolder, name)
-    print "mynovel",name,"realname",filename
-    
+    #print "mynovel",name,"realname",filename
     
     f = open(filename, 'r')
     fcontent = f.read()
     f.close()
-    print len(fcontent)
+    #print len(fcontent)
     
     t = get_template('mynovel.html')
-    d = {"names":nlist,"novelname":name,"content":fcontent.decode('gbk').encode('utf-8')}
-    c = Context( d )
-    html = t.render(c)
+    d = {"names":nlist,"novelname":name,"content":fcontent.decode('gbk', 'ignore').encode('utf-8')}
     return render_to_response('mynovel.html',d)
 
 

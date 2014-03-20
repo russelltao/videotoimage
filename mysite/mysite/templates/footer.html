@@ -1,0 +1,26 @@
+<footer class="footer">
+<div class="row">
+	<div class="col-md-4">
+	<script src="http://s5.cnzz.com/z_stat.php?id=1000315945&web_id=1000315945" language="JavaScript"></script>
+    </div>
+    
+    <div class="col-md-4">
+    <p>
+    当前{{ online_num }}人在线,表示毫无压力
+    {% if online_num > 50 %}
+    <strong>囧~</strong>
+    {% endif %}
+    {% if online_num < 10 %}
+    <strong>汗~</strong>
+    {% endif %}
+    </p>
+    </div>
+    
+    <div class="col-md-4">
+    <p>本页面加载耗时:<!!LOAD_TIMES!!>s</p>
+    <p>
+        <a href="/sitemap.xml">网站地图</a>
+    </p>    
+    </div>
+</div>
+</footer>

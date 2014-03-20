@@ -1,0 +1,129 @@
+<!DOCTYPE html>  
+{% load i18n %}
+<html>  
+<head>  
+    <meta charset="UTF-8">  
+    <title>{% block title %}{% endblock %}昏迷视频</title>  
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="{% block desc %}分享昏迷、公主抱、摆弄、冰恋视频的同好家园{% endblock %}">
+    <meta name="keywords" content="{% block keywords %}公主抱,昏迷,冰恋,扛,迷{% endblock %}">
+    <meta name="author" content="lordofcarry">
+    <meta name="baidu-site-verification" content="uIpew9E0cX" />
+    <meta name="msvalidate.01" content="AE296BFFD763965B52C05924CE5968A6" />
+    <meta name="google-site-verification" content="PEF6vJWOTUsbZD2TnzDVpxOts8E1SfCNd8M3BV7cGSA" />
+    {% load bootstrap3 %}
+    {% bootstrap_css %}
+    {% bootstrap_javascript %}
+    <script src="/static/jquery-1.11.0.min.js"></script>
+	<script src="http://libs.baidu.com/jquery/1.9.0/jquery.js"></script>
+    <style type="text/css" media="screen">  
+          .container {
+		  margin-left: auto;
+		  margin-right: auto;
+		  *zoom: 1;
+		}
+body {
+  padding-top: 60px; 
+}
+		.nav-tabs {  
+		    background-color: #ADD8E6;  
+		}  
+		.navbar {  
+		    background-color: #000000;  
+		}  
+		#pages {  
+		    font-size: 18px;
+		    color:#FFFFFF;
+		}  
+		
+    <script type="text/javascript">
+        var addFavorite = function (obj, url, title) {
+            var e = window.event || arguments.callee.caller.arguments[0];
+            var B = {
+                IE : /MSIE/.test(window.navigator.userAgent)
+                , FF : /Firefox/.test(window.navigator.userAgent)
+                , OP : /Opera/.test(window.navigator.userAgent)   //!!window.opera
+                , Ch : /Chrome/.test(window.navigator.userAgent)
+                , Sa : /Safari/.test(window.navigator.userAgent)
+            };
+            try {
+                obj.onmousedown = null;
+                if (B.IE) {
+                    obj.attachEvent("onmouseup", function () {
+                        try {
+                            window.external.AddFavorite(url, title);
+                            window.event.returnValue = false;
+                        } catch (exp) {}
+                    });
+                } 
+                else {
+                    if (B.FF) {
+                        obj.setAttribute("rel", "sidebar"), obj.title = title, obj.href = url;
+                    }
+                    else {
+                        //目前Opera、Chrome和Safari不能代码实现
+                        alert("加入收藏失败，请使用Ctrl+D进行添加");
+                    }
+                }
+            }
+            catch(e) {
+                alert("加入收藏失败，请使用Ctrl+D进行添加");
+            }
+        };
+    </script>
+    </style>  
+
+    <link rel="shortcut icon" href="/favicon.ico" />
+</head>  
+<body>
+
+<div class="navbar navbar-default navbar-fixed-top" role="navigation">  
+   <div class="container">
+      <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+        <ul class="nav navbar-nav">
+            <li><a id = "pages" href="http://115.28.146.228:9000">
+                <span class="glyphicon glyphicon-film">昏睡视频
+            </a></li>
+	        <li><a id = "pages" href="http://115.28.146.228:9000/mynovel/main" target="_blank">
+				<span class="glyphicon glyphicon-book">小说
+			</a> </li>
+			<li><a id = "pages" href="/howtobuy">
+				<span class="glyphicon glyphicon-comment">如何购买
+			</a> </li>
+			<li><a id = "pages" href="http://115.28.146.228:9000/latestvideo">
+				新视频[latest]
+			</a> </li>
+			<li><a id = "pages" href="http://lordofcarry.weebly.com" target="_blank">
+				睡美人
+			</a></li>
+			<li><a id = "pages" href="/onlineuser">
+				<span class="glyphicon glyphicon-user">在线同好
+			</a></li>
+			
+			<li><a href="javascript:void(0);" onMouseDown="addFavorite(this, window.location, document.title)">收藏本站</a></li>
+          </ul>
+		<ul class="nav navbar-nav navbar-right">
+	        <li><a  target="_blank" href="http://mail.qq.com/cgi-bin/qm_share?t=qm_mailme&email=jeHi-_ni6_7s---0zevi9eDs5OGj7uLg" style="text-decoration:none;">
+				<span class="glyphicon glyphicon-envelope"></span>Email向站长发邮件
+			</a></li>
+	    </ul>
+    </div>  
+       </div>  
+   </div>  
+</div>
+
+<div class="container">
+   <div class="container-liquid">  
+       <div id="content" class="flex">  
+           {% block sitecontent %}  
+           {% endblock %}  
+       </div>  
+   </div>  
+</div>
+
+<div class="container-liquid"> 
+{% include "footer.html" %}
+</div>  
+
+</body>  
+</html>  

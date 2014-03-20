@@ -1,0 +1,18 @@
+{% extends "mybase.html" %}
+
+{% block title %}在线用户 | {% endblock %}
+
+{% block sitecontent %} 
+
+<div class="table-responsive">
+<table class="table">
+<tr>
+<td>所在地址</td>
+</tr>
+{% for ip, user in onlineusers %}
+<tr>
+<td>{{ user }}</td>
+</tr>
+{% endfor %}
+
+{% endblock %}
