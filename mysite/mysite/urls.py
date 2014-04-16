@@ -1,6 +1,6 @@
 from django.conf.urls import patterns, include, url
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns  
-from imagemanage.views import mynovelhtml,scanfolder,OnlineUserPageView,VideoPageView,PicDetailPageView,NovelPageView
+from imagemanage.views import scanfolder,OnlineUserPageView,VideoPageView,PicDetailPageView,NovelPageView,OnlineWatchPageView
 from django.contrib import admin
 from django.views.generic import TemplateView
 import os
@@ -23,7 +23,7 @@ urlpatterns = patterns('',
     (r'^howtobuy$', TemplateView.as_view(template_name='howtobuy.html')),
     (r'^onlineuser$', OnlineUserPageView.as_view()),
     (r'^scanfolder$', scanfolder),
-    (r'^online$', TemplateView.as_view(template_name='onlinevideo.html')),
+    (r'^online$', OnlineWatchPageView.as_view()),
     
     url(r'^sitemap\.xml$', cache_page(60 * 60 * 12)(sitemap_views.sitemap), {'sitemaps': {'posts': PostSitemap}}),
     

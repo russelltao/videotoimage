@@ -1,4 +1,16 @@
+{% extends "mybase.html" %}
 
+{% block title %}{{ videoname }} | {% endblock %}
+{% block keywords %}{{ keywords }}{% endblock %}
+
+{% block sitecontent %} 
+<div class="row">
+<strong>站长每周更新一次，在线观看视频</strong>
+</div>
+<div class="row">
+{{ desc }}
+</div>
+<div class="row">
 <div id="playercontainer"></div> 
 <script type="text/javascript" src="http://cybertran.baidu.com/cloud/media/assets/cyberplayer/1.0/cyberplayer.min.js"></script> 
 <script type="text/javascript"> var player = cyberplayer("playercontainer").setup({ 
@@ -6,14 +18,16 @@
 	height : 400, 
 	backcolor : "#FFFFFF", 
 	stretching : "uniform", 
-	file : "http://bcs.duapp.com/myvideoshare/media/110%E6%96%A4--IlScatenato%E6%AD%BB%E6%B2%89%E6%AD%BB%E6%B2%89_MP4_AVC_AAC_320x240_20140303164311.mp4", 
-	image : "http://www.example.com/image/name/snap.jpg", 
-	autoStart : false, 
+	file : "{{ videofileurl }}", 
+	image : "", 
+	autoStart : true, 
 	repeat : "always", 
 	volume : 100, 
 	controlbar : "over", 
-	// ak和sk（只需前16位）参数值需要开发者进行申请 
-	ak:ak, sk:sk }); 
+	ak:"GCtNGeuvrjAlHHihVlBI0jrj", 
+	sk:"NqF20tqGy2A7aGqY8BW4H34oXTyLt2Ky" }); 
+
 </script>
-	
+</div>
+{% endblock %}
 	

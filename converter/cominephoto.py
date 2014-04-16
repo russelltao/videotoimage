@@ -36,7 +36,7 @@ class CombinePhost():
         titlefont = ImageFont.truetype('simsun.ttc',28)
         dr.text((5,5), title,fill=(0,0,0), font=titlefont)
         
-        dr.text((10,40), u"主站：http://lordofcarry.weebly.com/，图处站：http://115.28.146.228:9000/，邮箱：lordofcarry@foxmail.com",fill=(184,32,5), font=ImageFont.truetype('simsun.ttc',26,index=1))
+        dr.text((10,40), u"主站：http://lordofcarry.weebly.com/，图片站：http://115.28.146.228:9000/，邮箱：exchangevideo@qq.com",fill=(184,32,5), font=ImageFont.truetype('simsun.ttc',26,index=1))
         
         i = 0
         for y in  range(hnum):
@@ -64,7 +64,8 @@ class CombinePhost():
         videoinfo = mediainfo.parse_info(videofile)
         if None == videoinfo["general_duration"]:
             raise "can't get video duration"
-    
+        if None == videoinfo["video_width"]:
+            raise "can't get video_width"
         duration = float(videoinfo["general_duration"])
 
         wnum = 4
@@ -118,11 +119,13 @@ class CombinePhost():
             return False
         #print fnames
         #print videoinfo
-        return self.makeFinalPhoto(targetfile, videoinfo, fnames, capturetimes, wnum, hnum)
+        self.makeFinalPhoto(targetfile, videoinfo, fnames, capturetimes, wnum, hnum)
+        
+        return True
     
 if __name__ == '__main__':
     obj = CombinePhost()
-    videofiles = [u"D:/百度云/我的视频/10元/2F-267 Yellow Gym Suit.divx",u"D:/百度云/我的视频/完整专业视频/其他6-室内/electric_shock-desktop.m4v",]
+    videofiles = [u"D:/百度云/我的视频/10元/2F-267 Yellow Gym Suit.divx",u"D:/百度云/我的视频/完整专业视频/sleepysoles/witnessmmpotect.m4v",]
     for videofile in videofiles:
         targetfile = u"e:/new"+videofile[videofile.rfind('/'):]+".jpg"
         photofile = obj.makeVideoAbstract(videofile, targetfile)

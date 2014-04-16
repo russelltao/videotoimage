@@ -2,11 +2,12 @@
 
 {% block title %}{{ videoname }} | {% endblock %}
 {% block keywords %}{{ keywords }}{% endblock %}
+{% load i18n %}
 
 {% block sitecontent %} 
 
 <div class="row">
-<small>video name(请复制下面这行文字用以购买):</<small>>
+<small>{% trans "交换视频时，请复制截图下方的这行文字发给站长" %}:</<small>>
 </div>
 <div class="row">
 <strong>{{picinfo}}</strong>

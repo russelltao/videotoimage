@@ -1,3 +1,4 @@
+{% load i18n %}
 <footer class="footer">
 <div class="row">
 	<div class="col-md-4">
@@ -6,7 +7,7 @@
     
     <div class="col-md-4">
     <p>
-    当前{{ online_num }}人在线,表示毫无压力
+    {% blocktrans %}当前{% endblocktrans %}{{ online_num }}{% blocktrans %}人在线,表示毫无压力{% endblocktrans %}
     {% if online_num > 50 %}
     <strong>囧~</strong>
     {% endif %}
@@ -17,9 +18,9 @@
     </div>
     
     <div class="col-md-4">
-    <p>本页面加载耗时:<!!LOAD_TIMES!!>s</p>
+    <p>{% blocktrans %}本页面加载耗时{% endblocktrans %}:<!!LOAD_TIMES!!>s</p>
     <p>
-        <a href="/sitemap.xml">网站地图</a>
+        <a href="/sitemap.xml">{% blocktrans %}网站地图{% endblocktrans %}</a>
     </p>    
     </div>
 </div>

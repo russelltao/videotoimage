@@ -1,0 +1,139 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2014-03-27 09:56+0800\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: templates/footer.html:10
+msgid "当前"
+msgstr "Currently"
+
+#: templates/footer.html:10
+msgid "人在线,表示毫无压力"
+msgstr "people online, which means that no pressure"
+
+#: templates/footer.html:21
+msgid "本页面加载耗时"
+msgstr "This page load time consuming"
+
+#: templates/footer.html:23
+msgid "网站地图"
+msgstr "SiteMap"
+
+#: templates/howtobuy.html:3
+msgid "购买方法"
+msgstr "how to buy"
+
+#: templates/howtobuy.html:9
+msgid "只接收视频交换！"
+msgstr "Only video EXCHANGE!"
+
+#: templates/howtobuy.html:10
+msgid ""
+"交换时，如何找到站长没有的视频呢？可以先将视频名称放在首页的搜索栏里，根据搜"
+"索结果的截图判断视频是否存在。\n"
+"若不存在，再将你的视频截图通过邮件发给站长，由站长判断视频是否可以交换。注"
+"意，待交换视频必须含有昏迷横抱！"
+msgstr "If you have videos to exchange, How to decide if this sites have collected it? First you can search it in the home page, and judge the search result. If not in the result page, just send the thumbnail to my mail: videoexchange@qq.com, I will decided if I need it."
+
+#: templates/howtobuy.html:14
+#, fuzzy
+msgid ""
+"请将视频截图下方的文字复制下来，将其发到邮箱exchangevideo@qq.com中。并提供你"
+"所要交换的视频截图。"
+msgstr "Keep video capture text copied down below, to send it to the mailbox exchangevideo@qq.com in. "
+
+#: templates/howtobuy.html:17
+msgid "请注意，视频截图的上方有分辨率和时长，请在意的同学慎重选择，谢谢支持"
+msgstr "Please note the video size in the snapshot pictures!"
+
+#: templates/howtobuy.html:20
+msgid "例如，向站长邮箱发送以下文字"
+msgstr "For example, send the following text to the webmaster mail"
+
+#: templates/howtobuy.html:28
+msgid "这行文字就在截图的下方"
+msgstr "This line of text in the screenshot below"
+
+#: templates/howtobuy.html:32
+msgid "推荐使用IE9、Firefox、chrome等高版本浏览器，可以更好的浏览本站"
+msgstr ""
+"Recommend using IE9, Firefox, chrome contour version of the browser, you can "
+"browse the site better"
+
+#: templates/mybase.html:6
+msgid "昏迷视频"
+msgstr "SleepyVideo"
+
+#: templates/mybase.html:49
+msgid "视频"
+msgstr "Video"
+
+#: templates/mybase.html:52
+msgid "小说"
+msgstr "Sleepy Novel"
+
+#: templates/mybase.html:55
+msgid "如何交换"
+msgstr "HowToExchange"
+
+#: templates/mybase.html:58
+msgid "新视频"
+msgstr "LatestVideo"
+
+#: templates/mybase.html:61
+msgid "睡美人"
+msgstr "SleepingBeauty"
+
+#: templates/mybase.html:64
+msgid "在线同好"
+msgstr "OnlineUsers"
+
+#: templates/mybase.html:67
+msgid "一周一部"
+msgstr "FreeMovie"
+
+#: templates/picdetail.html:10
+msgid "交换视频时，请复制截图下方的这行文字发给站长"
+msgstr "When exchange videos, please sent the below description which you need to me, not photo thumbnail."
+
+#: templates/videoshow.html:22
+msgid ""
+"本站用来交换分享，如果有同好需要与我交换，请把站点上没有的视频截图发我，\n"
+"站长喜欢的视频必须是昏迷的、有横抱的（我不需要高清的、无横抱昏迷的，硬盘空间"
+"有限，推荐压缩RMVB后给我）。\n"
+"本站视频都经过RMVB格式压缩，喜欢原版高清的可以绕行。\n"
+"交换时请先把你有的视频在搜索栏里按名字搜索，搜索到后对比是否同一视频。不一样"
+"时，再把截图发我"
+msgstr ""
+"Site for the unconscious video exchange and sharing, if enthusiasts need to "
+"exchange with me, please do not put the video on the site screenshot sent "
+"me, my favorite video must have armcarry and unconscious (I do not need HD, "
+"no armcarry, disk space is limited, the recommended compression RMVB to me). "
+"Powered RMVB format video compression have been, like the original "
+"definition, non RMVB format can bypass. Currently the exchange and sharing "
+"mode for the mailing, Please search your video for exchange first to check "
+"if I have or not"
+
+#: templates/videoshow.html:30
+msgid "搜索"
+msgstr "Search"
+
+#: templates/videoshow.html:51 templates/videoshow.html.py:53
+msgid "页"
+msgstr "Page"
+
+#~ msgid "Email向站长发邮件"
+#~ msgstr "SendEmail"

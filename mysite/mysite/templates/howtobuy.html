@@ -1,20 +1,23 @@
 {% extends "mybase.html" %}
 {% load i18n %}
-{% block title %}购买方法 | {% endblock %}
+{% block title %}{% blocktrans %}购买方法{% endblocktrans %} | {% endblock %}
 
 
 {% block sitecontent %} 
 
-
 <div class="row">
-<strong>请将视频截图下方的文字复制下来，将其发到邮箱lordofcarry@foxmail.com中。付款方式可以是支付宝、银行卡充值或者为站长手机充值。</strong>
+<strong>{% trans "只接收视频交换！" %} </strong>
+{% blocktrans %}交换时，如何找到站长没有的视频呢？可以先将视频名称放在首页的搜索栏里，根据搜索结果的截图判断视频是否存在。
+若不存在，再将你的视频截图通过邮件发给站长，由站长判断视频是否可以交换。注意，待交换视频必须含有昏迷横抱！{% endblocktrans %}
 </div>
 <div class="row">
-<strong>站长QQ是：517442858。</strong>
-<small>请注意，视频截图的上方有分辨率和时长，请在意的同学慎重选择，谢谢支持</small>
+<strong>{% trans "请将视频截图下方的文字复制下来，将其发到邮箱exchangevideo@qq.com中。并提供你所要交换的视频截图。" %} </strong>
+</div>
+<div class="row">
+<small>{% trans "请注意，视频截图的上方有分辨率和时长，请在意的同学慎重选择，谢谢支持" %}</small>
 </div>
 <br/><br/>
-<div>例如，向站长邮箱发送以下文字：<br/>
+<div>{% blocktrans %}例如，向站长邮箱发送以下文字{% endblocktrans %}：<br/>
 <small>完整专业视频/Ruemorgue/RueMorgue - Guns Don't Kill People<br/>
 完整专业视频/Feet&Sleep Fantasis/feetandsleepDEMO/Candy - Neck Exposure (Part 1).flv<br/>
 专业视频片断/m-f-fetish-fair-basement-firemans-lift-by-masked-man.wmv<br/>
@@ -22,11 +25,11 @@ girl_carry_girl/昏迷抱/叠影惊潮.rm</small>
 </div>
 <br/>
 <div class="row">
-<h2>这行文字就在截图的下方：</h2>
+<h2>{% blocktrans %}这行文字就在截图的下方{% endblocktrans %}：</h2>
 <img src="/example.jpg" class="img-responsive" alt="Responsive image" /> </a><br/><br/>
 </div>
 <div class="row">
-<small>推荐使用IE9、Firefox、chrome等高版本浏览器，可以更好的浏览本站</small>
+<small>{% blocktrans %}推荐使用IE9、Firefox、chrome等高版本浏览器，可以更好的浏览本站{% endblocktrans %}</small>
 </div>
 
 {% endblock %}  

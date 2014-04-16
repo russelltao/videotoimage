@@ -25,7 +25,7 @@ USE_I18N = True
 STATIC_URL = '/static/'
 LANGUAGES = (
     ('en-us', 'English'),
-    ('zh-CN', 'Chinese'),
+    ('zh-cn', 'Chinese'),
 )
 
 # https://docs.djangoproject.com/en/1.6/howto/static-files/
@@ -38,7 +38,7 @@ STATICFILES_DIRS = (
     HERE+STATIC_URL,  
 )  
 LOCALE_PATHS = (
-    '/home/siteproject/videotoimage/conf/locale/',
+    '/home/siteproject/videotoimage/mysite/conf/locale/',
 )
 
 STATICFILES_FINDERS = (
@@ -93,14 +93,15 @@ TEMPLATE_CONTEXT_PROCESSORS = (
 )
 
 MIDDLEWARE_CLASSES = (
-    'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
+    
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'userena.middleware.UserenaLocaleMiddleware',
-    'django.middleware.locale.LocaleMiddleware',
     'django.contrib.redirects.middleware.RedirectFallbackMiddleware',
     'imagemanage.middleware.OnlineMiddleware',
 )

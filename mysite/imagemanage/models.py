@@ -26,12 +26,25 @@ class VideoFolder(models.Model):
     modifyTime = models.DateTimeField(default=datetime.datetime.now())
     keywords = models.CharField(max_length=30, default="昏迷,公主抱,冰恋")
     keywordsEng = models.CharField(max_length=30, default="unconscious,carry,OTS,chloro")
+    isShownInTree = models.BooleanField(default=True, verbose_name=u'是否在树状目录显示')
         
     def __unicode__(self):  
         return self.name  
     
     class Meta:
         ordering = ['name']
+        
+class OnlineWatchVideo(models.Model):
+    name = models.CharField(max_length=100)
+    url = models.CharField(max_length=300)
+    desc = models.CharField(max_length=300)
+    keywords = models.CharField(max_length=30, default="昏迷,公主抱,冰恋")
+        
+    def __unicode__(self):  
+        return self.name  
+    
+    class Meta:
+        ordering = ['url']
         
 class VideoPhoto(models.Model):
     name = models.CharField(max_length=100)

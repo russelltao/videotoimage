@@ -4,8 +4,8 @@ from django.http import HttpResponse
 from django.template.loader import get_template
 from django.template import Context
 from django.http import HttpResponse
-import os, time
-from models import TopSubject,VideoFolder
+import os, time, datetime
+from models import TopSubject,VideoFolder,OnlineWatchVideo
 from types import *
 from django.core.paginator import Paginator,EmptyPage,PageNotAnInteger
 from django.shortcuts import render_to_response
@@ -55,7 +55,8 @@ class Cacheinfo():
                 tmp = os.path.join(subrealfolder, calcf)
                 if not os.path.isdir(tmp):
                     filecount+=1
-            l.append("<a href=\"/%s/%s\">%s<small>[%d]</small></a>"%(realpath[len(DiskRootFolder):], f,f,filecount))
+            if f != "HotAsionKo" and f != "月空":
+                l.append("<a href=\"/%s/%s\">%s<small>[%d]</small></a>"%(realpath[len(DiskRootFolder):], f,f,filecount))
             t = self.walkAddFolder(subrealfolder)
             if t:
                 l.append(t)
@@ -154,7 +155,7 @@ class OnlineUserPageView(BaseMixin, TemplateView):
         onlineusers = []
         for ip in onlineips:
             address = iplocater.getIpAddr( string2ip( ip ) )
-            if '阿里云' in address or '淘宝' in address:
+            if '阿里云' in address or '淘宝' in address or '谷歌' in address:
                 continue
     
             onlineusers.append((ip,address))
@@ -168,10 +169,16 @@ class VideoPageView(BaseMixin, ListView):
     category = ""
     subtype = ""
     isShowLatestVideo = False
+    
+    searchResultNum = 0
+    isSearch = False
+    maxSearchNum = 20
+    
+    
     categoryValid = True
     completetype = ""
     
-    latestShowNum = 25 # 最新视频显示总数
+    latestShowNum = 49 # 最新视频显示总数
     topfilenum = 0 # 分类里最高目录的文件数
     
     def __init__(self):
@@ -199,9 +206,32 @@ class VideoPageView(BaseMixin, ListView):
         logger.debug("get_queryset page:%s"%(self.kwargs.get("page",None)))
         
         self.parse_url(self.kwargs)
+        tmplist = []
+        
+        self.query = self.request.GET.get('s')
+        if self.query:
+            self.isSearch = True
+            logger.debug("s:%s"%(self.query))
+            self.searchResultNum = 0
+            for fnames in self.cache.files:
+                name = fnames[0][fnames[0].rfind('/')+1:]
+                if self.query.encode('utf-8') in name:
+                    logger.debug("find:%s in %s"%(self.query,name.decode('utf-8')))
+                    self.searchResultNum+=1
+                    if self.searchResultNum < self.maxSearchNum:
+                        sitepath = fnames[0][len(DiskRootFolder):]
+                        imgsrc = resizeImageFolder+sitepath
+                        bigimgsrc = detailPicPrefix+sitepath
+                        tmppathname = sitepath[0:-4]
+                        alt = tmppathname[0:tmppathname.rfind('.')].replace('/',' ')
+                        tmplist.append((imgsrc,tmppathname, bigimgsrc, alt))
+                    
+
+            self.paginate_by = self.maxSearchNum
+            return tmplist
 
         find = False
-        tmplist = []
+        
         n=0
         if self.categoryValid:
             for root, dirs, files in self.cache.topsubjects[self.category][1]:
@@ -262,9 +292,13 @@ class VideoPageView(BaseMixin, ListView):
         context["topsubjectnames"]=names
         
     def genShowInfo(self, context):
-        showinfo = "以下视频是站长最新上传的%d部视频。每个截图上方有视频分辨华和截图，请大家看清楚需要再购买。"%(self.latestShowNum)
-        if not self.isShowLatestVideo:
-            showinfo = "[%s]类每个视频价格为%d元:  %s"%(self.category,self.cache.topsubjects[self.category][0],self.cache.topsubjects[self.category][4].encode('utf8'))
+        showinfo = "以下视频是站长最新上传的%d部视频。每个截图上方有视频分辨华和截图!"%(self.latestShowNum)
+        if self.isSearch:
+            showinfo = "查询关键字[%s]共搜索到%d结果!"%(self.query.encode('utf-8'), self.searchResultNum)
+            if self.searchResultNum>self.maxSearchNum:
+                showinfo += "但最多仅显示前%d个结果！请使用更详细的词进行搜索"%(self.maxSearchNum)
+        elif not self.isShowLatestVideo:
+            showinfo = "[%s]类:  %s"%(self.category,self.cache.topsubjects[self.category][4].encode('utf8'))
     
         context["price"] = showinfo
         
@@ -313,7 +347,28 @@ class PicDetailPageView(BaseMixin, TemplateView):
         context['keywords'] = videoname.replace('/',',')
         return context
     
+baiduOnlineFiles = [\
+                    "http://bcs.duapp.com/myvideoshare/media/110%E6%96%A4--IlScatenato%E6%AD%BB%E6%B2%89%E6%AD%BB%E6%B2%89_MP4_AVC_AAC_320x240_20140303164311.mp4"\
+                    ,]
+class OnlineWatchPageView(BaseMixin, TemplateView):
+    template_name = "onlinevideo.html"
 
+    def get_context_data(self, **kwargs):
+        context = super(OnlineWatchPageView, self).get_context_data(**kwargs)
+        
+        watchs = OnlineWatchVideo.objects.all()
+        
+        weekday = datetime.date.today().isoweekday()
+        
+        t = weekday%len(watchs)
+        logger.info("weekday:%d,%d"%(weekday,t))
+
+        context["videofileurl"]=watchs[t].url
+        context["desc"]=watchs[t].desc
+        context["videoname"]=watchs[t].name
+        context['keywords'] = watchs[t].keywords
+        return context
+    
 class novelmanage():
     def __init__(self):
         self.folder = novelFolder
@@ -323,6 +378,15 @@ class novelmanage():
         self.filelist = os.listdir(self.folder)
         self.filelist.sort(self.compare)
         return self.filelist
+    
+    def getNovelSitemap(self):
+        nlist = self.readFolder()
+        slist = []
+        for f in nlist:
+            loc = "/mynovel/"+f.decode('utf-8')
+            t = datetime.datetime.fromtimestamp(os.stat(self.folder + "/" + f).st_ctime)
+            slist.append((loc, t))
+        return slist
         
     def read(self, name):
         f = open(name, 'r')
@@ -366,28 +430,6 @@ class NovelPageView(BaseMixin, TemplateView):
         context['content'] = fcontent.decode('gbk', 'ignore').encode('utf-8')
 
         return context
-    
-def mynovelhtml(request, name):
-    novel = novelmanage()
-    nlist = novel.readFolder()
-
-    if name == "main":
-        name = nlist[0]
-    else:
-        name = name.encode('utf-8')
-        
-    filename = os.path.join(novelFolder, name)
-    #print "mynovel",name,"realname",filename
-    
-    f = open(filename, 'r')
-    fcontent = f.read()
-    f.close()
-    #print len(fcontent)
-    
-    t = get_template('mynovel.html')
-    d = {"names":nlist,"novelname":name,"content":fcontent.decode('gbk', 'ignore').encode('utf-8')}
-    return render_to_response('mynovel.html',d)
-
 
 
 if __name__ == "__main__":
