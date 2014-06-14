@@ -93,6 +93,8 @@ class ftpManage():
         
     def deleteFile(self, fpath):
         remotepath = fpath
+        #don't delete files
+        return True
         
         try:
             self.ftp.delete(remotepath.encode('utf8'))
@@ -105,6 +107,8 @@ class ftpManage():
         
     def deleteFolder(self, fpath):
         remotepath = fpath
+        
+        return True
         
         try:
             self.ftp.rmd(remotepath.encode('utf8'))
