@@ -54,6 +54,7 @@ MEDIAINFO='MediaInfo.x64.exe'
 #Codec                            : S_TEXT/ASS
 #Language                         : eng
 
+    
 def set_par(dict, index, value):
     if (not dict.has_key(index)) or dict[index] is None or dict[index] == '':
         dict[index] = value
@@ -114,7 +115,8 @@ def parse_info(filename):
             if mode == 'General':
                 if key == 'Format': set_par(result, 'general_format', value)
                 if key == 'Codec': set_par(result,'general_codec', value)
-                if key == 'File size': set_par(result,'general_size', value)
+                if key == 'File size': 
+                    set_par(result,'general_size', value)
                 if key == 'Overall bit rate': set_par(result,'general_bitrate', value)
                 if key == 'Duration' and hasgetDuration == False: 
                     print "Duration=",value
@@ -161,6 +163,6 @@ def parse_info(filename):
 
 
 if __name__ == '__main__':
-    r = parse_info("E:/wh/捂晕 28 千金绑架案（流畅）.rmvb")
-    pprint(r['general_duration'])
+    r = parse_info("D:/百度云/我的视频/高清/TheSleepyTrifecta.rmvb")
+    pprint(r)
     

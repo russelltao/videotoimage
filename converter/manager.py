@@ -93,8 +93,6 @@ class ftpManage():
         
     def deleteFile(self, fpath):
         remotepath = fpath
-        #don't delete files
-        return True
         
         try:
             self.ftp.delete(remotepath.encode('utf8'))
@@ -107,8 +105,6 @@ class ftpManage():
         
     def deleteFolder(self, fpath):
         remotepath = fpath
-        
-        return True
         
         try:
             self.ftp.rmd(remotepath.encode('utf8'))
@@ -250,13 +246,13 @@ def createIncrementPhoto():
     
     print "capture success:%d.failed:%d.alreadyCapFailed=%d"%(capSuccess,capFailed,alreadyCapFailed)
     print "uploadcount success:%d,fail:%d. "%(uploadCount,uploadFailed)
-    for i in needDelete:
-        print "delete",i
-        ftp.deleteFile(i[len(FtpRootFolder):])
-        
-    for i in needDelFolder:
-        print "delete folder",i
-        ftp.deleteFolder(i[len(FtpRootFolder):])
+#     for i in needDelete:
+#         print "delete",i
+#         ftp.deleteFile(i[len(FtpRootFolder):])
+#         
+#     for i in needDelFolder:
+#         print "delete folder",i
+#         ftp.deleteFolder(i[len(FtpRootFolder):])
     ftp.quit()
 
 if __name__ == '__main__':

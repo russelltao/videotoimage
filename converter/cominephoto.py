@@ -9,7 +9,24 @@ import mediainfo
 
 
 tmpfolder = "e:/tmp/"
+def getSizeInNiceString(sizeInBytes):
+    """
+    Convert the given byteCount into a string like: 9.9bytes/KB/MB/GB
+    """
+    #print type(sizeInBytes), sizeInBytes
+    sizeInBytes = int(sizeInBytes)
+    for (cutoff, label) in [(1024*1024*1024, "GB"),
+                            (1024*1024, "MB"),
+                            (1024, "KB"),
+                            ]:
+        if sizeInBytes >= cutoff:
+            return "%d %s" % (sizeInBytes / cutoff, label)
 
+    if sizeInBytes == 1:
+        return "1 byte"
+    else:
+        bytes = "%d" % (sizeInBytes or 0,)
+        return (bytes[:-2] if bytes.endswith('.0') else bytes) + ' bytes'
 class CombinePhost():
     def __init__(self, targetfolder="e:/tmp/"):
         self.targetfolder=targetfolder
@@ -25,10 +42,10 @@ class CombinePhost():
         toImage = Image.new('RGB', (w, h), (255,255,255))
         dr=ImageDraw.Draw(toImage)
         
-        txt1 = u'视频尺寸：%s*%s'%(videoinfo['video_width'].split(' ')[0],videoinfo['video_height'].split(' ')[0])
+        txt1 = u'分辨率：%s*%s'%(videoinfo['video_width'].split(' ')[0],videoinfo['video_height'].split(' ')[0])
         t = int(videoinfo['general_duration'])
-        txt2 = u'视频时长：%.2i:%.2i:%.2i'%(t/3600,(t%3600)/60,(t%3600)%60)
-        txt3 = u'影片名：%s 分类：%s'%(videoinfo['filename'],videoinfo['videotype'])
+        txt2 = u'时长：%.2i:%.2i:%.2i'%(t/3600,(t%3600)/60,(t%3600)%60)
+        txt3 = u'名称：%s 分类：%s 尺寸：%s'%(videoinfo['filename'],videoinfo['videotype'],getSizeInNiceString(videoinfo['general_size']))
         title = u"%s  %s  %s"%(txt1, txt2, txt3)
         
         tcolor = (255,255,255)
@@ -125,7 +142,7 @@ class CombinePhost():
     
 if __name__ == '__main__':
     obj = CombinePhost()
-    videofiles = [u"D:/百度云/我的视频/10元/2F-267 Yellow Gym Suit.divx",u"D:/百度云/我的视频/完整专业视频/sleepysoles/witnessmmpotect.m4v",]
+    videofiles = [u"D:/百度云/我的视频/高清/pkf+-+group+-+s9+pt2.wmv",]
     for videofile in videofiles:
         targetfile = u"e:/new"+videofile[videofile.rfind('/'):]+".jpg"
         photofile = obj.makeVideoAbstract(videofile, targetfile)

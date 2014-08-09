@@ -215,7 +215,7 @@ class VideoPageView(BaseMixin, ListView):
             self.searchResultNum = 0
             for fnames in self.cache.files:
                 name = fnames[0][fnames[0].rfind('/')+1:]
-                if self.query.encode('utf-8') in name:
+                if self.query.encode('utf-8').lower() in name.lower():
                     logger.debug("find:%s in %s"%(self.query,name.decode('utf-8')))
                     self.searchResultNum+=1
                     if self.searchResultNum < self.maxSearchNum:
